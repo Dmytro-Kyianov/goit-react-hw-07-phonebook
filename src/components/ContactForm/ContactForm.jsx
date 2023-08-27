@@ -1,15 +1,12 @@
 import { nanoid } from 'nanoid';
 import { useState } from 'react';
 import css from './ContactForm.module.css';
-
 import { useSelector, useDispatch } from 'react-redux';
-import { addContact, getContacts } from 'redux/addContactSlice';
+import { addContactsThunk } from 'redux/thunk';
 
 export const ContactForm = () => {
-  const contacts = useSelector(getContacts);
-
+  const { contacts } = useSelector(state => state.contacts);
   const dispatch = useDispatch();
-
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -22,19 +19,18 @@ export const ContactForm = () => {
       case 'number':
         setNumber(e.target.value);
         break;
-
       default:
         break;
     }
   };
 
-  const newContact = { name: name, number: number, id: nanoid() };
+  const newContact = { name: name, phone: number };
 
   const handleSubmit = e => {
     e.preventDefault(e);
     contacts.find(contact => contact.name === name)
       ? alert(`${name} is already in contacts`)
-      : dispatch(addContact(newContact));
+      : dispatch(addContactsThunk(newContact));
 
     setName('');
     setNumber('');
